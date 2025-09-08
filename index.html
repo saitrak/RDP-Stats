@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDP-Stat's - Free Discord Statistics Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6A3DE8;
+            --primary-dark: #5835B6;
+            --secondary: #FF5757;
+            --accent: #00D8A7;
+            --dark: #23272A;
+            --darker: #1a1d21;
+            --light: #f8f9fa;
+            --gray: #99AAB5;
+            --highlight: #FFDE59;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            padding: 60px 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 216, 167, 0.6);
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-weight: 300;
+        }
+        
+        .free-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 216, 167, 0.3);
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 2.8rem;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+            font-weight: 700;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            margin-top: 60px;
+        }
+        
+        .stat-card {
+            background: rgba(35, 39, 42, 0.7);
+            border-radius: 18px;
+            padding: 35px 30px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            border-color: rgba(106, 61, 232, 0.3);
+        }
+        
+        .stat-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-icon {
+            transform: scale(1.2);
+            color: var(--primary);
+        }
+        
+        .stat-title {
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .stat-desc {
+            color: var(--gray);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        /* Features */
+        .features-section {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+        }
+        
+        .feature-card {
+            background: rgba(35, 39, 42, 0.7);
+            border-radius: 18px;
+            padding: 35px 30px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(106, 61, 232, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: rotate(10deg) scale(1.2);
+            color: var(--accent);
+        }
+        
+        .feature-title {
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            color: var(--light);
+            font-weight: 600;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 120px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(106, 61, 232, 0.15) 0%, rgba(0, 216, 167, 0.15) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-title {
+            font-size: 3.2rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .cta-description {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 50px;
+            color: var(--gray);
+        }
+        
+        .highlight {
+            color: var(--highlight);
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 222, 89, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 18px 45px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.3rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(106, 61, 232, 0.4);
+            border: none;
+            cursor: pointer;
+            margin: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(106, 61, 232, 0.6);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--accent), #00B891);
+            box-shadow: 0 8px 20px rgba(0, 216, 167, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 12px 25px rgba(0, 216, 167, 0.6);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--darker);
+            padding: 70px 0 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 50px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+        
+        .footer-title {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .footer-links a {
+            display: block;
+            color: var(--gray);
+            margin-bottom: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.05rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 18px;
+            margin-top: 25px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+        }
+        
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(106, 61, 232, 0.4);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 15px rgba(0, 216, 167, 0.6);
+            }
+            50% {
+                text-shadow: 0 0 25px rgba(0, 216, 167, 0.9), 0 0 40px rgba(0, 216, 167, 0.7);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(0, 216, 167, 0.6);
+            }
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s, transform 1s;
+        }
+        
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2.3rem;
+            }
+            
+            .cta-title {
+                font-size: 2.5rem;
+            }
+            
+            .btn {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+            
+            .stats-grid, .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h1>RDP-Stat's</h1>
+                <div class="free-badge">100% FREE - NO PAYMENTS REQUIRED</div>
+                <p class="tagline">The most advanced Discord statistics bot for tracking your server's growth and activity in real-time with beautiful customizable channels.</p>
+                <a href="https://discord.com/oauth2/authorize?client_id=1414465924768993372&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn">Add to Discord</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Track Everything</h2>
+            <p class="tagline">RDP-Stat's can monitor and display a wide variety of server statistics in real-time</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="stat-title">Member Analytics</h3>
+                    <p class="stat-desc">Track total members, excluding bots, or count only bots. Always keep an eye on your community growth with real-time updates.</p>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-signal"></i>
+                    </div>
+                    <h3 class="stat-title">Online Members</h3>
+                    <p class="stat-desc">Monitor how many members are currently online and active in your server. Perfect for tracking engagement peaks.</p>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="stat-title">Server Boosts</h3>
+                    <p class="stat-desc">Display your server's boost count and current boost level to encourage more boosting and show off your perks.</p>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="stat-title">Moderation Stats</h3>
+                    <p class="stat-desc">Keep track of banned and muted members to maintain your server's security and monitor moderation activity.</p>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <h3 class="stat-title">Emojis & Stickers</h3>
+                    <p class="stat-desc">Count your total custom emojis, animated emojis, and stickers. Know when you're approaching server limits.</p>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="stat-title">Event Tracking</h3>
+                    <p class="stat-desc">Show upcoming event count to keep your community engaged and informed about your server's activities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose RDP-Stat's</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-time Updates</h3>
+                    <p class="stat-desc">Statistics update automatically every 3 minutes, or manually with a simple command. Always accurate, always current.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3 class="feature-title">Fully Customizable</h3>
+                    <p class="stat-desc">Create custom categories and choose exactly which stats to display where. Complete control over your stat channels.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="feature-title">No Data Collection</h3>
+                    <p class="stat-desc">We don't store any of your server data. All information stays securely within your Discord server.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Easy Setup</h3>
+                    <p class="stat-desc">Simple slash commands make setup quick and painless, even for beginners. Get running in under 5 minutes.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="feature-title">Slash Commands</h3>
+                    <p class="stat-desc">Modern, intuitive slash command interface with full help documentation and autocomplete support.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Operation</h3>
+                    <p class="stat-desc">Reliable hosting ensures your stats are always updating, day and night. 99.9% uptime guarantee.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="invite">
+        <div class="container">
+            <h2 class="cta-title">Ready to Enhance Your Server?</h2>
+            <p class="cta-description">Add RDP-Stat's to your Discord server today and start tracking your server's growth and activity with beautiful, real-time statistics channels. <span class="highlight">Completely free forever!</span></p>
+            
+            <a href="https://discord.com/oauth2/authorize?client_id=1414465924768993372&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn">
+                <i class="fab fa-discord"></i> Add to Discord
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">RDP-Stat's</h3>
+                    <p>The ultimate free Discord statistics bot for tracking your server's growth and activity in real-time.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Navigation</h3>
+                    <div class="footer-links">
+                        <a href="#features">Features</a>
+                        <a href="#invite">Add to Discord</a>
+                        <a href="#support">Support Server</a>
+                        <a href="#commands">Commands</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Legal</h3>
+                    <div class="footer-links">
+                        <a href="#terms">Terms of Service</a>
+                        <a href="#privacy">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 RDP-Stat's. All rights reserved. This service is 100% free and always will be.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
